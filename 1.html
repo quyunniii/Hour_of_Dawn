@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .bgSizeCover {
+  background-image: url('./images/Map/Glasnia/Main_Map.JPG');
+  background-size: cover;
+  width: 1445.6px;
+  height: 1084.2px;
+  border: 10px solid;
+  color: rgba(31, 192, 241, 0.481);
+  resize: both;
+  overflow: scroll;
+  margin-left: auto;
+  margin-right: auto;
+  /* position: absolute; */
+}
+img {
+  position: relative;
+  width: 200px;
+}
+
+</style>
+
+
+
+</head>
+
+
+
+<body>
+    
+<center>
+    <h2 style="font-size: 100px; font-family:cursive; color: #1fb8c9a2;">
+    Hour of Dawn
+</h2>
+</center>
+
+
+<div class="bgSizeCover" onmousedown="findchar(event)" onmousemove="updatepos(event)" id="bg">
+    <img src="./images/Characters/Black Side/Archer.PNG" alt="Paris" id="i1">
+</div>
+
+<!-- <div class="img" id="d_character">
+    
+</div> -->
+
+
+<script>
+    var img = document.getElementById('i1');
+    var x = [100, 200, 300];
+    var y = [200, 300, 400];
+    var bg = document.getElementById("bg");
+    console.dir(bg);
+    
+
+    function updatepos(event){
+        console.dir(event);
+        var bg_left = bg.offsetLeft;
+        var bg_top = bg.offsetTop;
+        setpos(event.pageX, event.pageY);
+    }
+
+    function findchar(event){
+        var mouse_x = event.pageX;
+        var mouse_y = event.pageY
+    }
+
+    function setpos(x, y){
+        img.style.position ="absolute";
+        img.style.left = x + "px";
+        img.style.top = y + "px";
+    }
+
+    if(img){
+        setpos(400, 300);
+    }
+    else
+        console.log('Not found');
+
+    var count = 0;
+    // setInterval(function(){
+    //     var id = count%x.length;
+    //     setpos(x[id], y[id]);
+    //     count++;
+    // }, 1000);
+
+</script>
+
+</body>
+</html>
+
