@@ -34,57 +34,118 @@ img {
     <h2 style="font-size: 100px; font-family:cursive; color: #1fb8c9a2;">
     Hour of Dawn
 </h2>
+<div id="canvasesdiv" style="position:relative; width:1600px; height:1600px">
+    <canvas id="myCanvas" width="1600" height="1600" 
+    style="border:1px solid #1fb8c9a2; 
+    z-index: 1;
+    position:absolute;
+    left:0px;
+    top:0px;">
+    </canvas>
+
+    <canvas id="layer_game" width="1600" height="1600" 
+    style="border:2px solid #35bc9164; 
+    z-index: 2;
+    position:absolute;
+    left:0px;
+    top:0px;">
+    </canvas>
+
+</div>
 </center>
 
+<img id="block" src="./images/block.jpg" alt="ice block" width="50" height="50" style="display: none;" >
+<img id="bg" src="./images/bg_.jpg" alt="background" width="50" height="50" style="display: none;" >
 
-<div class="bgSizeCover" onmousedown="findchar(event)" onmousemove="updatepos(event)" id="bg">
-    <img src="./images/Characters/Black Side/Archer.PNG" alt="Paris" id="i1">
-</div>
-
-<!-- <div class="img" id="d_character">
-    
-</div> -->
 
 
 <script>
-    var img = document.getElementById('i1');
-    var x = [100, 200, 300];
-    var y = [200, 300, 400];
+    //init vars
+    var c, c_game;
+    var ctx, ctx_game, ctx_char;
+
+    var canvas_hw = 1600;
+    var ice_block_hw = 90;
+    var border_hw = (canvas_hw - 9 * ice_block_hw) / 2 ;
+
+
+
+    var char_names = ["Archer", "Knight", "Mage", "Phoenix", "Puppeteer", "Royal"]
+    var puppet_names = ["Claymore", "Knight", "Shield", "Transport"]
+    // var char_loc = {"Archer":[x,y], 
+    // "Knight":[x,y], 
+    // "Mage":[x,y], 
+    // "Phoenix":[x,y],
+    // "Puppeteer":[x,y], 
+    // "Royal":[x,y],
+    // "Archer":[x,y], 
+    // "Knight":[x,y], 
+    // "Mage":[x,y], 
+    // "Phoenix":[x,y], 
+    // "Puppeteer":[x,y], 
+    // "Royal":[x,y]}
+    function draw_block(x, y, w, h) {
+
+        var block = document.getElementById("block");
+        if (!block) {
+            console.dir(block);
+        }
+        ctx.drawImage(block,x,y,w,h);
+    }
+
+
+
+    document.onreadystatechange = () => {
+    if (document.readyState === "complete") {
+    c = document.getElementById("myCanvas");
+    // c.width = canvas_hw;
+    // c.hieght = canvas_hw;
+    c_game = document.getElementById("layer_game");
+    // c_game.width = canvas_hw;
+    // c_game.hieght = canvas_hw;
+    c_game.onmouseup = function() {mouseUp(event)};
+    ctx = c.getContext("2d");
+    ctx_game = c_game.getContext("2d")
     var bg = document.getElementById("bg");
-    console.dir(bg);
+    ctx.drawImage(bg,0,0,canvas_hw,canvas_hw);
+
+
+
+
+    var i = 0;
+    while (i < 9) {
+        // change row
+        j = 0;
+        var block_y = border_hw + ice_block_hw * i;
+        while (j < 9) {
+            //draw block horizontally
+            var block_x = border_hw + ice_block_hw * j;
+            draw_block(block_x, block_y, ice_block_hw, ice_block_hw);
+            // console.log("i-" + i + ', j-'+j + 'x:' +block_x + 'y:' +block_y);
+            j++;
+        } 
+        i++;
+    }
+  }
+};
+
+
+function mouseUp(event) {
+  console.dir(event);
+  var j, i, sq_x, sq_y;
+    if (150 <= event.offsetX && event.offsetX < 1050 && 150 <= event.offsetY && event.offsetY < 1050) {
+        ctx_game.clearRect(0,0,canvas_hw,canvas_hw);
+        j = Math.floor((event.offsetX - border_hw) / ice_block_hw);
+        i = Math.floor((event.offsetY - border_hw) / ice_block_hw);
+        sq_x = border_hw + j * ice_block_hw;
+        sq_y = border_hw + i * ice_block_hw;
+        ctx_game.fillStyle = "#70A8C044";
+        ctx_game.fillRect(sq_x, sq_y, ice_block_hw, ice_block_hw);
+        ctx_game.stroke();
+    }
+}
+
     
-
-    function updatepos(event){
-        console.dir(event);
-        var bg_left = bg.offsetLeft;
-        var bg_top = bg.offsetTop;
-        setpos(event.pageX, event.pageY);
-    }
-
-    function findchar(event){
-        var mouse_x = event.pageX;
-        var mouse_y = event.pageY
-    }
-
-    function setpos(x, y){
-        img.style.position ="absolute";
-        img.style.left = x + "px";
-        img.style.top = y + "px";
-    }
-
-    if(img){
-        setpos(400, 300);
-    }
-    else
-        console.log('Not found');
-
-    var count = 0;
-    // setInterval(function(){
-    //     var id = count%x.length;
-    //     setpos(x[id], y[id]);
-    //     count++;
-    // }, 1000);
-
 </script>
 
 </body>
