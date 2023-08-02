@@ -119,9 +119,9 @@ img {
     //draw back ground
     ctx.drawImage(bg,0,0,canvas_hw,canvas_hw);
     //name of game
-    ctx.font =  "bolder 100px Fantasy";
+    ctx.font =  "bold 100px Fantasy";
     ctx.textAlign = "center";
-    ctx.strokeStyle = "#4682B4";
+    ctx.strokeStyle = "#4682C4";
     ctx.strokeText("Hour of Dawn".toUpperCase(), canvas_hw / 2, 80);
     // draw 9*9 blocks
     var i = 0;
@@ -180,10 +180,21 @@ img {
             ctx_game.stroke();
             draw_characters();
             var cur_char = char_on_cur_block(sq_x,sq_y);
+            var side = cur_char.substring(cur_char.length - 1)
+            var text =  ""
+            if (side == "b") {
+                text += "black ";
+                ctx_game.strokeStyle = "#00000088";
+            }
+            else if (side == "w") {
+                text += "white ";
+                ctx_game.strokeStyle = "#FFFFFFDD";
+            }
+            text += cur_char.substring(0, cur_char.length - 2);
             if (cur_char) {
-                ctx_game.font = "bold 48px serif";
+                ctx_game.font = "bold 48px Fantasy";
                 ctx_game.textAlign = "center";
-                ctx_game.strokeText(cur_char.substring(0, cur_char.length - 2).toUpperCase(), canvas_hw / 2, border_hw/2);
+                ctx_game.strokeText(text.toUpperCase(), canvas_hw / 2, border_hw/2);
             }
             
         }
