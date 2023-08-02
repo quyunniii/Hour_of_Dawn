@@ -180,18 +180,19 @@ img {
             ctx_game.stroke();
             draw_characters();
             var cur_char = char_on_cur_block(sq_x,sq_y);
-            var side = cur_char.substring(cur_char.length - 1)
-            var text =  ""
-            if (side == "b") {
-                text += "black ";
-                ctx_game.strokeStyle = "#00000088";
-            }
-            else if (side == "w") {
-                text += "white ";
-                ctx_game.strokeStyle = "#FFFFFF";
-            }
-            text += cur_char.substring(0, cur_char.length - 2);
+
             if (cur_char) {
+                var side = cur_char.substring(cur_char.length - 1)
+                var text =  ""
+                if (side == "b") {
+                    text += "black ";
+                    ctx_game.strokeStyle = "#00000088";
+                }
+                else if (side == "w") {
+                    text += "white ";
+                    ctx_game.strokeStyle = "#FFFFFF";
+                }
+                text += cur_char.substring(0, cur_char.length - 2);
                 ctx_game.font = "bold 48px Fantasy";
                 ctx_game.textAlign = "center";
                 ctx_game.strokeText(text.toUpperCase(), canvas_hw / 2, border_hw/2);
@@ -205,6 +206,7 @@ function char_on_cur_block(x, y) {
     for (i in char_loc) {
         var block = block_on_canvas(char_loc[i][0],char_loc[i][1]); 
         if (block.x == x && block.y == y) {
+            console.log('i-' +i);
             return i;
         }
     }
