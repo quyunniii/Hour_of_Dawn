@@ -31,11 +31,11 @@ img {
 <body>
     
 <center>
-    <h2 style="font-size: 100px; font-family:cursive; color: #1fb8c9a2;">
+    <!-- <h2 style="font-size: 100px; font-family:cursive; color: #1fb8c9a2;">
     Hour of Dawn
-</h2>
-<div id="canvasesdiv" style="position:relative; width:1600px; height:1600px">
-    <canvas id="myCanvas" width="1600" height="1600" 
+</h2> -->
+<div id="canvasesdiv" style="position:relative; width:1400px; height:1400px">
+    <canvas id="myCanvas" width="1400" height="1400" 
     style="border:1px solid #1fb8c9a2; 
     z-index: 1;
     position:absolute;
@@ -43,7 +43,7 @@ img {
     top:0px;">
     </canvas>
 
-    <canvas id="layer_game" width="1600" height="1600" 
+    <canvas id="layer_game" width="1400" height="1400" 
     style="border:2px solid #35bc9164; 
     z-index: 2;
     position:absolute;
@@ -54,100 +54,191 @@ img {
 </div>
 </center>
 
-<img id="block" src="./images/block.jpg" alt="ice block" width="50" height="50" style="display: none;" >
-<img id="bg" src="./images/bg_.jpg" alt="background" width="50" height="50" style="display: none;" >
+<!-- background -->
+<img id="block" src="./images/block.jpg" alt="ice block" style="display: none;" >
+<img id="block_golden" src="./images/block_y.jpg" alt="ice block" style="display: none;" >
+<img id="bg" src="./images/bg_.jpg" alt="background" style="display: none;" >
 
+<!-- black side main characters -->
+<img id="archer_b" src="./images/Characters/Black Side/Archer.PNG" alt="archer_b" style="display: none;" >
+<img id="mage_b" src="./images/Characters/Black Side/Mage.PNG" alt="mage_b" style="display: none;" >
+<img id="phoenix_b" src="./images/Characters/Black Side/Phoenix.PNG" alt="phoenix_b" style="display: none;" >
+<img id="puppeteer_b" src="./images/Characters/Black Side/Puppeteer.PNG" alt="puppeteer_b" style="display: none;" >
+<img id="royal_b" src="./images/Characters/Black Side/Royal.PNG" alt="royal_b" style="display: none;" >
 
+<!-- white side main characters -->
+<img id="archer_w" src="./images/Characters/White Side/Archer.PNG" alt="archer_w" style="display: none;" >
+<img id="mage_w" src="./images/Characters/White Side/Mage.PNG" alt="mage_w" style="display: none;" >
+<img id="phoenix_w" src="./images/Characters/White Side/Phoenix.PNG" alt="phoenix_w" style="display: none;" >
+<img id="puppeteer_w" src="./images/Characters/White Side/Puppeteer.PNG" alt="puppeteer_w" style="display: none;" >
+<img id="royal_w" src="./images/Characters/White Side/Royal.PNG" alt="royal_w" style="display: none;" >
 
 <script>
     //init vars
     var c, c_game;
     var ctx, ctx_game, ctx_char;
-
-    var canvas_hw = 1600;
-    var ice_block_hw = 90;
+    var canvas_hw = 1400;
+    var ice_block_hw = 80;
     var border_hw = (canvas_hw - 9 * ice_block_hw) / 2 ;
 
 
 
-    var char_names = ["Archer", "Knight", "Mage", "Phoenix", "Puppeteer", "Royal"]
-    var puppet_names = ["Claymore", "Knight", "Shield", "Transport"]
-    // var char_loc = {"Archer":[x,y], 
-    // "Knight":[x,y], 
-    // "Mage":[x,y], 
-    // "Phoenix":[x,y],
-    // "Puppeteer":[x,y], 
-    // "Royal":[x,y],
-    // "Archer":[x,y], 
-    // "Knight":[x,y], 
-    // "Mage":[x,y], 
-    // "Phoenix":[x,y], 
-    // "Puppeteer":[x,y], 
-    // "Royal":[x,y]}
-    function draw_block(x, y, w, h) {
+    var char_names = ["archer", "mage", "phoenix", "puppeteer", "royal"]
+    var puppet_names = ["claymore", "knight", "shield", "transport"]
+    var sides = ["_w", "_b"]
+    var char_loc = {"archer_w":[6,0], 
+    "mage_w":[8,0], 
+    "phoenix_w":[0,0],
+    "puppeteer_w":[2,0], 
+    "royal_w":[4,0],
+    "archer_b":[2,8], 
+    "mage_b":[0,8], 
+    "phoenix_b":[8,8], 
+    "puppeteer_b":[6,8], 
+    "royal_b":[4,8]}
 
-        var block = document.getElementById("block");
+    // var map = [];
+    // {x:1, y:1, n:0}
+    // for (var i = 0; i < 9; i++) {
+    //     for (var j = 0; j < 9; j++) {
+    //         map.push([i,j]);
+    //         //[[i,j]]
+    //     }
+    // }
+
+    /* check website fully loaded and then draw the background */
+    document.onreadystatechange = () => {
+    if (document.readyState === "complete") {
+    c = document.getElementById("myCanvas");
+    c_game = document.getElementById("layer_game");
+    // check for mouse up event on layer 2
+    c_game.onmouseup = function() {mouseUp(event)};
+    ctx = c.getContext("2d");
+    ctx_game = c_game.getContext("2d")
+    var bg = document.getElementById("bg");
+    //draw back ground
+    ctx.drawImage(bg,0,0,canvas_hw,canvas_hw);
+    //name of game
+    ctx.font =  "bolder 100px Fantasy";
+    ctx.textAlign = "center";
+    ctx.strokeStyle = "#4682B4";
+    ctx.strokeText("Hour of Dawn".toUpperCase(), canvas_hw / 2, 80);
+    // draw 9*9 blocks
+    var i = 0;
+    var color = "w";
+    while (i < 9) {
+        // change row
+        j = 0;
+        var block_y = border_hw + ice_block_hw * i;
+        if (i == 4) {
+            color = "y";
+        }
+        else {
+            color = "w";
+        }
+        while (j < 9) {
+            //draw block horizontally
+            var block_x = border_hw + ice_block_hw * j;
+            draw_block(block_x, block_y, ice_block_hw, ice_block_hw, color);
+            // console.log("i-" + i + ', j-'+j + 'x:' +block_x + 'y:' +block_y);
+            j++;
+        } 
+        i++;
+    }
+    draw_characters();
+}
+};
+
+    /* draw block on canvas at (x,y) with height h, width w, and color c in {"w", "y"} */
+    function draw_block(x, y, w, h, c) {
+        var block;
+        if (c == "w") {
+            block = document.getElementById("block");
+            // console.dir(block);
+        }
+        else {
+            block = document.getElementById("block_golden");
+        }
         if (!block) {
             console.dir(block);
         }
         ctx.drawImage(block,x,y,w,h);
     }
 
-
-
-    document.onreadystatechange = () => {
-    if (document.readyState === "complete") {
-    c = document.getElementById("myCanvas");
-    // c.width = canvas_hw;
-    // c.hieght = canvas_hw;
-    c_game = document.getElementById("layer_game");
-    // c_game.width = canvas_hw;
-    // c_game.hieght = canvas_hw;
-    c_game.onmouseup = function() {mouseUp(event)};
-    ctx = c.getContext("2d");
-    ctx_game = c_game.getContext("2d")
-    var bg = document.getElementById("bg");
-    ctx.drawImage(bg,0,0,canvas_hw,canvas_hw);
-
-
-
-
-    var i = 0;
-    while (i < 9) {
-        // change row
-        j = 0;
-        var block_y = border_hw + ice_block_hw * i;
-        while (j < 9) {
-            //draw block horizontally
-            var block_x = border_hw + ice_block_hw * j;
-            draw_block(block_x, block_y, ice_block_hw, ice_block_hw);
-            // console.log("i-" + i + ', j-'+j + 'x:' +block_x + 'y:' +block_y);
-            j++;
-        } 
-        i++;
+    /* grey mask on the block if mouse up event detected anywhere on the block */
+    function mouseUp(event) {
+    console.dir(event);
+    var j, i, sq_x, sq_y;
+        if (border_hw <= event.offsetX && event.offsetX < (canvas_hw - border_hw) && border_hw <= event.offsetY && event.offsetY < (canvas_hw - border_hw)) {
+            ctx_game.clearRect(0,0,canvas_hw,canvas_hw);
+            j = Math.floor((event.offsetX - border_hw) / ice_block_hw);
+            i = Math.floor((event.offsetY - border_hw) / ice_block_hw);
+            sq_x = border_hw + j * ice_block_hw;
+            sq_y = border_hw + i * ice_block_hw;
+            ctx_game.fillStyle = "#70A8C044";
+            ctx_game.fillRect(sq_x, sq_y, ice_block_hw, ice_block_hw);
+            ctx_game.stroke();
+            draw_characters();
+            var cur_char = char_on_cur_block(sq_x,sq_y);
+            if (cur_char) {
+                ctx_game.font = "bold 48px serif";
+                ctx_game.textAlign = "center";
+                ctx_game.strokeText(cur_char.substring(0, cur_char.length - 2).toUpperCase(), canvas_hw / 2, border_hw/2);
+            }
+            
+        }
     }
-  }
+
+/* return character name if found on the block, else return 0 */
+function char_on_cur_block(x, y) {
+    for (i in char_loc) {
+        var block = block_on_canvas(char_loc[i][0],char_loc[i][1]); 
+        if (block.x == x && block.y == y) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+/* draw all the characters at their current position */
+function draw_characters() {
+    for (char in char_names) {
+        for (side in sides) {
+            var character = document.getElementById(char_names[char] + sides[side]);
+            var loc = char_loc[char_names[char] + sides[side]];
+            if (!character) {
+                console.dir(character);
+            }
+            else {
+                var char_w = character.width;        
+                var char_h = character.height;
+                //calculate the block on canvas
+                var block = block_on_canvas(loc[0], loc[1]);
+                var img = loc_on_canvas(block.x, block.y, char_w, char_h);
+                // console.log("x:" + img.x + "y:" + img.y + "w:" + img.w + "h:" + img.h);
+                ctx_game.drawImage(character,img.x,img.y,img.w,img.h);
+            }
+        }
+    }
+};
+
+function block_on_canvas(x, y) {
+    var canvas_x = border_hw + x * ice_block_hw;
+    var canvas_y = border_hw + y * ice_block_hw;
+    return {x:canvas_x, y:canvas_y};
+    // return canvas_x, canvas_y;
+};
+
+function loc_on_canvas(block_x, block_y, char_w, char_h) {
+    var img_w = ice_block_hw;
+    var img_h = ice_block_hw * char_h / char_w;
+    var img_y = block_y - (img_h - ice_block_hw);
+    return {x:block_x, y:img_y, w:img_w, h:img_h};
 };
 
 
-function mouseUp(event) {
-  console.dir(event);
-  var j, i, sq_x, sq_y;
-    if (150 <= event.offsetX && event.offsetX < 1050 && 150 <= event.offsetY && event.offsetY < 1050) {
-        ctx_game.clearRect(0,0,canvas_hw,canvas_hw);
-        j = Math.floor((event.offsetX - border_hw) / ice_block_hw);
-        i = Math.floor((event.offsetY - border_hw) / ice_block_hw);
-        sq_x = border_hw + j * ice_block_hw;
-        sq_y = border_hw + i * ice_block_hw;
-        ctx_game.fillStyle = "#70A8C044";
-        ctx_game.fillRect(sq_x, sq_y, ice_block_hw, ice_block_hw);
-        ctx_game.stroke();
-    }
-}
 
-    
 </script>
-
 </body>
 </html>
 
