@@ -39,7 +39,7 @@
 <!-- background -->
 <img id="block" src="./images/block.jpg" alt="ice block" style="display: none;" >
 <img id="block_golden" src="./images/block_y.jpg" alt="ice block" style="display: none;" >
-<img id="bg" src="./images/bg_1.jpg" alt="background" style="display: none;" >
+<img id="bg" src="./images/bg_2.jpg" alt="background" style="display: none;" >
 
 <!-- black side main characters -->
 <img id="archer_b" src="./images/Characters/Black Side/Archer.PNG" alt="archer_b" style="display: none;" >
@@ -92,9 +92,14 @@
     "royal_b":2
     }
 
-    var current_character="n";
-    var previous_block = 0;
-    var current_block = 0;
+    // var map = [];
+    // {x:1, y:1, n:0}
+    // for (var i = 0; i < 9; i++) {
+    //     for (var j = 0; j < 9; j++) {
+    //         map.push([i,j]);
+    //         //[[i,j]]
+    //     }
+    // }
 
     /* check website fully loaded and then draw the background */
     document.onreadystatechange = () => {
@@ -139,7 +144,19 @@
 }
 };
 
+function calculate_legal_move(charater) {
+    var loc = char_loc[charater];
+    var mobility = moves[charater];
+    var legal_moves = [];
+    for (x = -1 * mobility; x <= mobility; x++) {
+        for (y = -1 * mobility; y <= mobility; y++) {
 
+            if (-1 * mobility<=x+y && x+y<=mobility) {
+
+            }
+        }
+    }
+}
 
 
 /* draw block on canvas at (x,y) with height h, width w, and color c in {"w", "y"} */
@@ -166,20 +183,15 @@ function mouseUp(event) {
         ctx_game.clearRect(0,0,canvas_hw,canvas_hw);
         j = Math.floor((event.offsetX - border_hw) / ice_block_hw);
         i = Math.floor((event.offsetY - border_hw) / ice_block_hw);
-
         sq_x = border_hw + j * ice_block_hw;
         sq_y = border_hw + i * ice_block_hw;
-
+        ctx_game.fillStyle = "#70A8C044";
+        ctx_game.fillRect(sq_x, sq_y, ice_block_hw, ice_block_hw);
+        ctx_game.stroke();
+        draw_characters();
         var cur_char = char_on_cur_block(sq_x,sq_y);
-        // if there is a character at sq_x, sq_y
+
         if (cur_char) {
-            ctx_game.fillStyle = "#07e8ac88";
-            ctx_game.fillRect(sq_x, sq_y, ice_block_hw, ice_block_hw);
-            ctx_game.stroke();
-            if (!current_character.includes(cur_char)) {
-                current_character = cur_char;
-                previous_block = 0;
-            }
             var side = cur_char.substring(cur_char.length - 1)
             var text =  ""
             if (side == "b") {
@@ -190,160 +202,20 @@ function mouseUp(event) {
                 text += "white ";
                 ctx_game.strokeStyle = "#FFFFFF";
             }
-            var character = cur_char.substring(0, cur_char.length - 2);
-            text += character;
+            text += cur_char.substring(0, cur_char.length - 2);
             ctx_game.font = "bold 48px Fantasy";
             ctx_game.textAlign = "center";
             ctx_game.strokeText(text.toUpperCase(), canvas_hw / 2, border_hw/2);
-            draw_legal_moves(cur_char);
         } 
-        else if (!"n".includes(current_character)){
-            //paint regular selector color
-                if (!previous_block || i != previous_block[0] || j != previous_block[1]) {
-                    previous_block = [i,j];
-                    ctx_game.fillStyle = "#07e8ac88";
-                    ctx_game.fillRect(sq_x, sq_y, ice_block_hw, ice_block_hw);
-                    ctx_game.stroke();
-                }
-                else if (i == previous_block[0] && j == previous_block[1]) {
-                    char_loc[current_character][0] = j;
-                    char_loc[current_character][1] = i;
-                    current_character = "n";
-                    previous_block = 0;
-                } 
-            // ctx_game.fillStyle = "#70A8C044";
-            // ctx_game.fillRect(sq_x, sq_y, ice_block_hw, ice_block_hw);
-            // ctx_game.stroke();
-        }
-        // else {
-        //     ctx_game.fillStyle = "#07e8ac88";
-        //     ctx_game.fillRect(sq_x, sq_y, ice_block_hw, ice_block_hw);
-        //     ctx_game.stroke();
-        // }
-        
-        console.log("prev_block: " + previous_block);
-        console.log("curr_char: " + char_loc[current_character]);
-        draw_characters();
     }
-}
-// function calculate_legal_move(charater) {
-//     var loc = char_loc[charater];
-//     var mobility = moves[charater];
-//     var legal_moves = [];
-//     for (var x = -1 * mobility; x <= mobility; x++) {
-//         for (var y = -1 * mobility; y <= mobility; y++) {
-
-//             if (-1 * mobility<=x+y && x+y<=mobility) {
-
-//             }
-//         }
-//     }
-// }
-
-/* return a list of all legal moves for the cahracter at sq_x, sq_y */
-function draw_legal_moves(character) {
-    //location of current character
-    var loc = char_loc[character];
-    //how many moves can the character take
-    var char_moves = moves[character];
-    var legal_blocks = [];
-    var blocked = [];
-    var step_i_loc = [];
-    step_i_loc.push([loc]);
-    for (var i=0; i<char_moves; i++) {
-        var temp = [];
-        // console.log("move:"+char_moves+" step_i_loc"+step_i_loc[i]);
-        for (j in step_i_loc[i]) {
-            // console.log("move:"+i+" step_i_loc[i]"+step_i_loc[i]);
-            var curr_loc = step_i_loc[i][j];
-            //this is 2 steps
-            for (var m=-1; m<=1; m++) {
-                    var temp_loc_1 = [curr_loc[0]+m,curr_loc[1]];
-                    var temp_loc_2 = [curr_loc[0],curr_loc[1]+m];
-                    // console.log("move:"+i+" curr_loc"+temp_loc);
-                    // console.log("move:"+i+" temp_loc"+temp_loc);
-                    //check if inside the map
-                    if (0 <= temp_loc_1[0] && temp_loc_1[0]<= 8 && 0 <= temp_loc_1[1] && temp_loc_1[1]<=8) {
-                        //check if there is a character on temp_loc
-                        var block = block_on_canvas(temp_loc_1[0], temp_loc_1[1]);
-                        // console.log("x,y:"+temp_loc_1[0]+","+temp_loc_1[1]);
-                        if (char_on_cur_block(block.x, block.y)&& !char_on_cur_block(block.x, block.y).includes(character)) {
-                            blocked.push([block.x, block.y]);
-                        }
-                        else {
-                            temp.push(location_of_block(block.x, block.y));
-                        }
-                    }
-                    if (0 <= temp_loc_2[0] && temp_loc_2[0]<= 8 && 0 <= temp_loc_2[1] && temp_loc_2[1]<=8) {
-                        //check if there is a character on temp_loc
-                        var block = block_on_canvas(temp_loc_2[0], temp_loc_2[1]);
-                        // console.log("x,y:"+temp_loc_2[0]+","+temp_loc_2[1]);
-                        if (char_on_cur_block(block.x, block.y) && !char_on_cur_block(block.x, block.y).includes(character)) {
-                            // console.log("char:"+char_on_cur_block(block.x, block.y)+" target:"+character);
-                            // console.log("include?:"+char_on_cur_block(block.x, block.y).includes(character));
-                            blocked.push([block.x, block.y]);
-                        }
-                        else if (!char_on_cur_block(block.x, block.y)) {
-                            temp.push(location_of_block(block.x, block.y));
-                        }
-                    }
-            }
-        }
-        // console.log("move:"+i+" step_i_loc"+step_i_loc[i]);
-        step_i_loc.push(temp);
-        legal_blocks = legal_blocks.concat(temp);
-    }
-    for (i in unique_location(legal_blocks)) {
-        // console.log("x:"+legal_blocks[i]);
-            var block = block_on_canvas(unique_location(legal_blocks)[i][0], unique_location(legal_blocks)[i][1]);
-            ctx_game.fillStyle = "#b6c1d555";
-            ctx_game.fillRect(block.x, block.y, ice_block_hw, ice_block_hw);
-            ctx_game.stroke();
-    }
-    var unique_blocked = unique_location(blocked);
-    for (i in unique_blocked) {
-        // console.log("blocked x,y:"+blocked[i]);
-        ctx_game.fillStyle = "#bb000055";
-        ctx_game.fillRect(unique_blocked[i][0], unique_blocked[i][1], ice_block_hw, ice_block_hw);
-        ctx_game.stroke();
-    }
-    // return ;
-}
-function unique_location(Arr){
-    let outputArray = [];
- 
-    // Count variable is used to add the
-    // new unique value only once in the
-    // outputArray.
-    let count = 0;
-    
-    // Start variable is used to set true
-    // if a repeated duplicate value is
-    // encontered in the output array.
-    let start = false;
-    
-    for (let j = 0; j < Arr.length; j++) {
-        for (let k = 0; k < outputArray.length; k++) {
-            if (Arr[j][0] == outputArray[k][0] && Arr[j][1] == outputArray[k][1]) {
-                start = true;
-            }
-        }
-        count++;
-        if (count == 1 && start == false) {
-            outputArray.push(Arr[j]);
-        }
-        start = false;
-        count = 0;
-    }
-    return outputArray;
 }
 
 /* return character name if found on the block, else return 0 */
-function char_on_cur_block(sq_x, sq_y) {
+function char_on_cur_block(x, y) {
     for (i in char_loc) {
         var block = block_on_canvas(char_loc[i][0],char_loc[i][1]); 
-        if (block.x == sq_x && block.y == sq_y) {
-            // console.log('i-' +i);
+        if (block.x == x && block.y == y) {
+            console.log('i-' +i);
             return i;
         }
     }
@@ -376,13 +248,6 @@ function block_on_canvas(x, y) {
     var canvas_x = border_hw + x * ice_block_hw;
     var canvas_y = border_hw + y * ice_block_hw;
     return {x:canvas_x, y:canvas_y};
-    // return canvas_x, canvas_y;
-};
-
-function location_of_block(sq_x, sq_y) {
-    var block_x = (sq_x-border_hw)/ice_block_hw;
-    var block_y = (sq_y-border_hw)/ice_block_hw;
-    return [block_x,block_y];
     // return canvas_x, canvas_y;
 };
 
